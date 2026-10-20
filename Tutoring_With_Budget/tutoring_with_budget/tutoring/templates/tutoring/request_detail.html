@@ -1,0 +1,28 @@
+{% extends "tutoring/base.html" %}
+{% block content %}
+<h2>{{ tr.subject }}</h2>
+<p class="text-muted">Posted by {{ tr.student.username }} · {{ tr.get_status_display }}</p>
+<p>{{ tr.description }}</p>
+<p><strong>Budget:</strong> ${{ tr.budget|floatformat:2 }}/hr</p>
+<p><strong>Availability:</strong> {{ tr.availability }}</p>
+
+{% if can_apply %}
+<form method="post" action="{% url 'apply' tr.pk %}">{% csrf_token %}
+  {{ app_form.as_p }}<button class="btn btn-success">Apply to tutor</button>
+</form>
+{% endif %}
+
+{% if is_owner %}
+<h4 class="mt-4">Applicants</h4>
+{% for a in tr.applications.all %}
+  <div class="border rounded p-2 mb-2">
+    <strong>{{ a.tutor.username }}</strong> ({{ a.get_status_display }}) {{ a.message }}
+    {% if tr.status == 'open' %}
+    <form method="post" action="{% url 'accept' tr.pk a.pk %}" class="d-inline">{% csrf_token %}
+      <button class="btn btn-sm btn-primary">Accept</button>
+    </form>
+    {% endif %}
+  </div>
+{% empty %}<p>No applicants yet.</p>{% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "tutoring/base.html" %}
+{% block content %}
+<h2>Open tutoring requests</h2>
+<form method="get" class="mb-3 d-flex gap-2">
+  <input name="subject" value="{{ subject }}" placeholder="Filter by subject" class="form-control">
+  <button class="btn btn-outline-primary">Filter</button>
+</form>
+{% for r in requests %}
+  <div class="border rounded p-3 mb-2">
+    <a href="{% url 'request_detail' r.pk %}"><strong>{{ r.subject }}</strong></a>
+    <div class="text-muted">by {{ r.student.username }} · ${{ r.budget|floatformat:2 }}/hr · {{ r.availability }}</div>
+  </div>
+{% empty %}<p>No open requests yet.</p>{% endfor %}
+{% endblock %}
